@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Classic Blue T-Shirt",
+    "price": 499,
+    "image": "blue-tshirt.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Black Jogger Trousers",
+    "price": 899,
+    "image": "black-joggers.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Red Pullover Hoodie",
+    "price": 1299,
+    "image": "red-hoodie.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Sage Green Dress",
+    "price": 1499,
+    "image": "sage-green-dress.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Yellow Summer Top",
+    "price": 799,
+    "image": "yellow-summer-top.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Aero Running Shoes",
+    "price": 1999,
+    "image": "running-shoes.jpg"
+  }
+]

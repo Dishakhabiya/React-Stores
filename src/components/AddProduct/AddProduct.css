@@ -1,0 +1,59 @@
+.add-product-container {
+  width: 400px;
+  padding: 24px;
+  background-color: white;
+  border-radius: 12px;
+}
+
+.add-product-heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.add-product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-input {
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: #f4c430;
+}
+
+.submitButton {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.yellow-button {
+  background-color: #f4c430;
+  color: #000;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.yellow-button:hover {
+  opacity: 0.9;
+}
