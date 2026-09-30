@@ -2,12 +2,20 @@ import { useContext } from 'react';
 import AppContext from '../../store/app-context.js';
 import Modal from '../UI/Modal.js';
 import './Cart.css';
+const getProductImage = (imageName) => {
+  try {
+    return require(`../../assests/${imageName}`);
+  } catch (err) {
+    return require('../../assests/default.jpg');
+  }
+};
+
 function CartItem({ id, name, image, quantity}) {
    const {handleIncreaseItem,handleDecreaseItem} = useContext(AppContext);
     return (
         <div className="cart-item">
             <div className="item-img">
-                <img src={require(`../../assests/${image}`)} alt={name} />
+                <img src={getProductImage(image)} alt={name} />
             </div>
 
             <div className="item-name">{name}</div>
