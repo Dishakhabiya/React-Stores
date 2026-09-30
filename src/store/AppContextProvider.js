@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import AppContext from './app-context';
 
 import { useEffect } from 'react';
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+const API_BASE_URL = (process.env.REACT_APP_API_URL || 'http://localhost:5001').replace(/\/$/, '');
 
 export const AppContextProvider = ({children}) => {
      const [showCart,setShowCart] = useState(false);
