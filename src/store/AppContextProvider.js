@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import AppContext from './app-context';
 
 import { useEffect } from 'react';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+
 export const AppContextProvider = ({children}) => {
      const [showCart,setShowCart] = useState(false);
   const [showAddProduct,setShowAddProduct] = useState(false);
@@ -13,7 +15,7 @@ export const AppContextProvider = ({children}) => {
       }
       const sendProductData = async(product) => {
         const response = await fetch(
-          "http://localhost:5001/products",
+          `${API_BASE_URL}/products`,
           {
             method: "POST",
             headers: {"Content-Type": "application/json" },
@@ -97,7 +99,7 @@ export const AppContextProvider = ({children}) => {
 
    const handleCheckout = async () => {
      try {
-       const response = await fetch("http://localhost:5001/checkout", {
+       const response = await fetch(`${API_BASE_URL}/checkout`, {
          method: "POST",
          headers: { "Content-Type": "application/json" },
          body: JSON.stringify({ cartItems })
@@ -121,7 +123,7 @@ export const AppContextProvider = ({children}) => {
      try{
       isLoading(true);
        const response = await fetch(
-        "http://localhost:5001/products"
+        `${API_BASE_URL}/products`
       );
       const data = await response.json();
       setProducts(data || {});
