@@ -2,7 +2,15 @@ import React, {useState} from 'react';
 import AppContext from './app-context';
 
 import { useEffect } from 'react';
-const API_BASE_URL = (process.env.REACT_APP_API_URL || 'http://localhost:5001').replace(/\/$/, '');
+const getApiBaseUrl = () => {
+  let raw = (process.env.REACT_APP_API_URL || 'http://localhost:5001').trim().replace(/\/+$/, '');
+  if (raw && !raw.startsWith('http://') && !raw.startsWith('https://')) {
+    raw = 'https://' + raw;
+  }
+  return raw;
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const AppContextProvider = ({children}) => {
      const [showCart,setShowCart] = useState(false);
