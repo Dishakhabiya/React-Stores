@@ -2,9 +2,11 @@ import { createContext } from "react";
 const AppContext = createContext ({
     showCart: false,
     showAddProduct: false,
-    products: [],
+    products: {},
     cartItems: [],
     loading: false,
+    orderNotification: null,
+    clearNotification: () => {},
     openCart: () => {},
     closeCart: () => {},
     openAddProduct: () => {},

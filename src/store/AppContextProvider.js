@@ -136,25 +136,39 @@ export const AppContextProvider = ({children}) => {
     const fetchProducts = async() => {
      try {
        isLoading(true);
-       const response = await fetch(`${API_BASE_URL}/products`);
-       if (!response.ok) throw new Error("API not ok");
-       const data = await response.json();
-       if (data && Object.keys(data).length > 0) {
-         setProducts(data);
-       } else {
-         throw new Error("Empty products from API");
+       // Fetch live from DummyJSON API directly as requested
+       const response = await fetch('https://dummyjson.com/products?limit=200');
+       if (!response.ok) throw new Error("DummyJSON API error");
+       const json = await response.json();
+       const items = json.products || [];
+       if (items.length > 0) {
+         const obj = {};
+         items.forEach(p => {
+           obj[String(p.id)] = {
+             id: p.id,
+             name: p.title,
+             price: p.price,
+             image: p.thumbnail || (p.images && p.images[0]) || 'default.jpg',
+             category: p.category,
+             description: p.description,
+             rating: p.rating
+           };
+         });
+         setProducts(obj);
+         isLoading(false);
+         return;
        }
-       isLoading(false);
      } catch(err) {
-       console.warn("Could not fetch products from API, loading local dataset fallback.", err);
-       const fallbackObj = {};
-       initialProductsData.forEach((p, idx) => {
-         const key = String(p.id || idx + 1);
-         fallbackObj[key] = p;
-       });
-       setProducts(fallbackObj);
-       isLoading(false);
+       console.warn("Could not fetch live DummyJSON API, using local product dataset fallback.", err);
      }
+
+     const fallbackObj = {};
+     initialProductsData.forEach((p, idx) => {
+       const key = String(p.id || idx + 1);
+       fallbackObj[key] = p;
+     });
+     setProducts(fallbackObj);
+     isLoading(false);
     };
     fetchProducts();
    },[]);

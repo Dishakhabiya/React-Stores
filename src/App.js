@@ -5,10 +5,12 @@ import Products from './components/Products/Products';
 import Cart from './components/Cart/Cart';
 import AddProduct from './components/AddProduct/AddProduct';
 
-import AppContext, { AppContextProvider } from "./store/AppContextProvider";
+import AppContext from "./store/app-context";
+import { AppContextProvider } from "./store/AppContextProvider";
 
 function NotificationToast() {
-  const { orderNotification, clearNotification } = useContext(AppContext);
+  const context = useContext(AppContext) || {};
+  const { orderNotification, clearNotification } = context;
   if (!orderNotification) return null;
   return (
     <div className="toast-notification" onClick={clearNotification}>
