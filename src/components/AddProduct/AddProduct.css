@@ -18,6 +18,12 @@
   gap: 16px;
 }
 
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .form-label {
   font-size: 0.95rem;
   font-weight: 500;

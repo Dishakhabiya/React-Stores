@@ -45,11 +45,15 @@ export const AppContextProvider = ({children}) => {
       function closeAddProduct(){
           setShowAddProduct(false);
       }
-      const handleAddProduct = (productName) => {
+      const handleAddProduct = (productName, price, merchant, currency = "$") => {
         const newId = Object.keys(products).length + 1;
+        const numPrice = parseFloat(price);
         const product = {
           id: newId,
           name: productName,
+          price: isNaN(numPrice) ? 9.99 : numPrice,
+          merchant: merchant && merchant.trim() ? merchant.trim() : "Custom Store",
+          currency: currency || "$",
           image: "default.jpg"
         };
         sendProductData(product);
@@ -69,23 +73,32 @@ export const AppContextProvider = ({children}) => {
       //   );
       //   await response.json();
       // };
-      const handleAddToCart = (productId,productName,productImage) => {
-       const  productItemIndex= cartItems.findIndex((item) => item.id === productId);
-        if(productItemIndex === -1){
-        const cartItem = {
-          id: productId ,
-          name: productName, 
-          image: productImage,
-          quantity: 1
+      const handleAddToCart = (productId, productName, productImage, price, merchant, currency) => {
+        const productItemIndex = cartItems.findIndex((item) => item.id === productId);
+        const targetProduct = products[productId] || {};
+        const itemPrice = price !== undefined ? price : (targetProduct.price !== undefined ? targetProduct.price : 9.99);
+        const itemMerchant = merchant || targetProduct.merchant || 'Official Merchant';
+        const itemCurrency = currency || targetProduct.currency || '$';
+        const itemName = productName || targetProduct.name || 'Product';
+        const itemImage = productImage || targetProduct.image || 'default.jpg';
+
+        if (productItemIndex === -1) {
+          const cartItem = {
+            id: productId,
+            name: itemName,
+            image: itemImage,
+            price: Number(itemPrice),
+            merchant: itemMerchant,
+            currency: itemCurrency,
+            quantity: 1
+          };
+          setCartItem((state) => [...state, cartItem]);
+        } else {
+          const updatedCartItems = [...cartItems];
+          updatedCartItems[productItemIndex].quantity += 1;
+          setCartItem(updatedCartItems);
         }
-        setCartItem((state) => [...state,cartItem])
-      }else{
-        const updatedCartItems = [...cartItems];
-        updatedCartItems[productItemIndex].quantity +=1;
-        setCartItem(updatedCartItems);
-      }
-        
-      }
+      };
    const handleIncreaseItem = (id) => {
      const  productItemIndex= cartItems.findIndex((item) => item.id === id);
      const updatedCartItems = [...cartItems];
@@ -153,10 +166,13 @@ export const AppContextProvider = ({children}) => {
        if (items.length > 0) {
          const obj = {};
          items.forEach(p => {
+           const merchantName = p.brand || (p.category ? p.category.charAt(0).toUpperCase() + p.category.slice(1) + " Store" : "Official Store");
            obj[String(p.id)] = {
              id: p.id,
              name: p.title,
-             price: p.price,
+             price: typeof p.price === 'number' ? p.price : 9.99,
+             currency: "$",
+             merchant: merchantName,
              image: p.thumbnail || (p.images && p.images[0]) || 'default.jpg',
              category: p.category,
              description: p.description,
@@ -174,7 +190,18 @@ export const AppContextProvider = ({children}) => {
      const fallbackObj = {};
      initialProductsData.forEach((p, idx) => {
        const key = String(p.id || idx + 1);
-       fallbackObj[key] = p;
+       const merchantName = p.merchant || p.brand || (p.category ? p.category.charAt(0).toUpperCase() + p.category.slice(1) + " Store" : "Official Store");
+       fallbackObj[key] = {
+         id: p.id || idx + 1,
+         name: p.name || p.title,
+         price: typeof p.price === 'number' ? p.price : 9.99,
+         currency: p.currency || "$",
+         merchant: merchantName,
+         image: p.image || 'default.jpg',
+         category: p.category,
+         description: p.description,
+         rating: p.rating
+       };
      });
      setProducts(fallbackObj);
      isLoading(false);
