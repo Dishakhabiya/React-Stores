@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import AppContext from './app-context';
+import initialProductsData from '../data/product.json';
 
-import { useEffect } from 'react';
 const getApiBaseUrl = () => {
   let raw = (process.env.REACT_APP_API_URL || 'http://localhost:5001').trim().replace(/\/+$/, '');
   if (raw && !raw.startsWith('http://') && !raw.startsWith('https://')) {
@@ -128,21 +128,29 @@ export const AppContextProvider = ({children}) => {
   
    useEffect(() => {
     const fetchProducts = async() => {
-     try{
-      isLoading(true);
-       const response = await fetch(
-        `${API_BASE_URL}/products`
-      );
-      const data = await response.json();
-      setProducts(data || {});
-      isLoading(false);
-    }catch(err){
-      console.log(err);
-      isLoading(false);
-    }
-     
-     };
-     fetchProducts();
+     try {
+       isLoading(true);
+       const response = await fetch(`${API_BASE_URL}/products`);
+       if (!response.ok) throw new Error("API not ok");
+       const data = await response.json();
+       if (data && Object.keys(data).length > 0) {
+         setProducts(data);
+       } else {
+         throw new Error("Empty products from API");
+       }
+       isLoading(false);
+     } catch(err) {
+       console.warn("Could not fetch products from API, loading local dataset fallback.", err);
+       const fallbackObj = {};
+       initialProductsData.forEach((p, idx) => {
+         const key = String(p.id || idx + 1);
+         fallbackObj[key] = p;
+       });
+       setProducts(fallbackObj);
+       isLoading(false);
+     }
+    };
+    fetchProducts();
    },[]);
    const AppContextValue = {
     showCart,
