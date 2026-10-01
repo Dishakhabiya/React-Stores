@@ -18,6 +18,9 @@ export const AppContextProvider = ({children}) => {
   const [cartItems,setCartItem] = useState([]);
   const [products,setProducts] =useState({});
   const [loading,isLoading]= useState(false);
+  const [orderNotification, setOrderNotification] = useState(null);
+
+  const clearNotification = () => setOrderNotification(null);
       function openCart(){
           setShowCart(true);
       }
@@ -106,8 +109,7 @@ export const AppContextProvider = ({children}) => {
    }
 
    const handleCheckout = async () => {
-     const tempOrderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
-     // Close cart and clear items immediately so UI modal doesn't get stuck
+     const currentCart = [...cartItems];
      closeCart();
      setCartItem([]);
 
@@ -115,17 +117,19 @@ export const AppContextProvider = ({children}) => {
        const response = await fetch(`${API_BASE_URL}/checkout`, {
          method: "POST",
          headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({ cartItems })
+         body: JSON.stringify({ cartItems: currentCart })
        });
        if (response.ok) {
          const data = await response.json();
-         setTimeout(() => alert(`Order placed successfully!\nOrder ID: ${data.orderId}`), 50);
+         setOrderNotification(`🎉 Order placed successfully! Order ID: ${data.orderId}`);
          return;
        }
      } catch (err) {
        console.warn("Backend API offline, completed checkout locally.", err);
      }
-     setTimeout(() => alert(`Order placed successfully!\nOrder ID: ${tempOrderId}`), 50);
+
+     const tempOrderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+     setOrderNotification(`🎉 Order placed successfully! Order ID: ${tempOrderId}`);
    };
   
    useEffect(() => {
@@ -160,6 +164,8 @@ export const AppContextProvider = ({children}) => {
     products,
     cartItems,
     loading,
+    orderNotification,
+    clearNotification,
     openCart,
     closeCart,
     openAddProduct,
