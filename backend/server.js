@@ -13,15 +13,35 @@ app.use((req, res, next) => {
   next();
 });
 
-// In-memory database with store products matching assets
-let products = {
-  "1": { id: 1, name: "Classic Blue T-Shirt", price: 499, image: "blue-tshirt.jpg" },
-  "2": { id: 2, name: "Black Jogger Trousers", price: 899, image: "black-joggers.jpg" },
-  "3": { id: 3, name: "Red Pullover Hoodie", price: 1299, image: "red-hoodie.jpg" },
-  "4": { id: 4, name: "Sage Green Dress", price: 1499, image: "sage-green-dress.jpg" },
-  "5": { id: 5, name: "Yellow Summer Top", price: 799, image: "yellow-summer-top.jpg" },
-  "6": { id: 6, name: "Aero Running Shoes", price: 1999, image: "running-shoes.jpg" }
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Helper function to load products from product.json
+const loadProductsData = () => {
+  try {
+    const jsonPath = path.join(__dirname, '../src/data/product.json');
+    if (fs.existsSync(jsonPath)) {
+      const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+      const obj = {};
+      data.forEach((p, idx) => {
+        const key = String(p.id || idx + 1);
+        obj[key] = p;
+      });
+      return obj;
+    }
+  } catch (err) {
+    console.error("Failed to load product.json", err);
+  }
+  return {
+    "1": { id: 1, name: "Classic Blue T-Shirt", price: 499, image: "blue-tshirt.jpg" }
+  };
 };
+
+let products = loadProductsData();
 
 let cart = [];
 

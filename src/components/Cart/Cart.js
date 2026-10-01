@@ -3,6 +3,10 @@ import AppContext from '../../store/app-context.js';
 import Modal from '../UI/Modal.js';
 import './Cart.css';
 const getProductImage = (imageName) => {
+  if (!imageName) return require('../../assests/default.jpg');
+  if (imageName.startsWith('http://') || imageName.startsWith('https://')) {
+    return imageName;
+  }
   try {
     return require(`../../assests/${imageName}`);
   } catch (err) {
