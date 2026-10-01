@@ -109,27 +109,36 @@ export const AppContextProvider = ({children}) => {
    }
 
    const handleCheckout = async () => {
+     if (cartItems.length === 0) return;
      const currentCart = [...cartItems];
-     closeCart();
-     setCartItem([]);
+     let orderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
 
      try {
-       const response = await fetch(`${API_BASE_URL}/checkout`, {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({ cartItems: currentCart })
+       // Call DummyJSON Carts API on checkout
+       const response = await fetch('https://dummyjson.com/carts/add', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({
+           userId: 1,
+           products: currentCart.map(item => ({ id: item.id, quantity: item.quantity || 1 }))
+         })
        });
        if (response.ok) {
          const data = await response.json();
-         setOrderNotification(`🎉 Order placed successfully! Order ID: ${data.orderId}`);
-         return;
+         if (data && data.id) {
+           orderId = 'ORD-' + data.id + '-' + Math.floor(1000 + Math.random() * 9000);
+         }
        }
      } catch (err) {
-       console.warn("Backend API offline, completed checkout locally.", err);
+       console.warn("Checkout API call error:", err);
      }
 
-     const tempOrderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
-     setOrderNotification(`🎉 Order placed successfully! Order ID: ${tempOrderId}`);
+     // Trigger alert window first
+     alert(`Order placed successfully!\nOrder ID: ${orderId}`);
+
+     // When user clicks OK on the alert dialog, clear cart and close cart modal
+     setCartItem([]);
+     closeCart();
    };
   
    useEffect(() => {
